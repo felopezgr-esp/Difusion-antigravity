@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Difusión - Listado de Eventos</title>
+    <title>Difusión - Calendario de Eventos</title>
 
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -18,18 +18,8 @@
     <!-- SheetJS for Excel Export -->
     <script src="https://cdn.sheetjs.com/xlsx-latest/package/dist/xlsx.full.min.js"></script>
 
-    <!-- Leaflet Map -->
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-
     <!-- Custom Style -->
     <link rel="stylesheet" href="styles.css">
-    <style>
-        /* Table specifics not general enough for styles.css yet */
-        .table-view-container {
-            margin-top: 1rem;
-        }
-    </style>
 </head>
 
 <body>
@@ -40,8 +30,8 @@
                 <p>Gestión de Eventos y Exposiciones</p>
             </div>
             <div class="actions">
-                <a href="index.html" class="btn secondary">
-                    <i data-lucide="calendar"></i> CALENDARIO
+                <a href="eventos.html" class="btn secondary">
+                    <i data-lucide="list"></i> LISTADO
                 </a>
                 <button id="templateBtn" class="btn secondary" title="Descargar plantilla de ejemplo">
                     <i data-lucide="file-spreadsheet"></i> Plantilla
@@ -59,9 +49,29 @@
             </div>
         </header>
 
-        <div class="sidebar-map-layout">
-            <aside class="content-sidebar">
-                <section id="alertsContainer" class="alerts-container compact-view">
+        <div class="index-layout">
+            <main class="calendar-container glass-panel">
+                <div class="calendar-header">
+                    <button id="prevMonth" class="icon-btn"><i data-lucide="chevron-left"></i></button>
+                    <h2 id="currentMonthYear">Cargando...</h2>
+                    <button id="nextMonth" class="icon-btn"><i data-lucide="chevron-right"></i></button>
+                </div>
+                <div class="calendar-grid-header">
+                    <div>Lun</div>
+                    <div>Mar</div>
+                    <div>Mié</div>
+                    <div>Jue</div>
+                    <div>Vie</div>
+                    <div>Sáb</div>
+                    <div>Dom</div>
+                </div>
+                <div id="calendarGrid" class="calendar-grid">
+                    <!-- Javascript will populate this -->
+                </div>
+            </main>
+
+            <aside class="index-sidebar">
+                <section id="alertsContainer" class="alerts-container">
                     <div class="alerts-header">
                         <i data-lucide="bell-ring"></i> Tareas y Estado
                     </div>
@@ -77,61 +87,9 @@
                     </div>
                 </section>
             </aside>
-
-            <div class="map-section main-area">
-                <div id="map"></div>
-            </div>
-
-            <aside class="filters-sidebar glass-panel">
-                <div class="filter-group">
-                    <label>Buscar</label>
-                    <input type="text" id="searchInput" placeholder="Nombre, lugar...">
-                </div>
-                <div class="filter-group">
-                    <label>Filtrar Mes</label>
-                    <input type="text" id="monthFilter" placeholder="Ej: Enero 2024" list="monthSuggestions">
-                    <datalist id="monthSuggestions"></datalist>
-                </div>
-                <div class="filter-group">
-                    <label>Zoom Mapa</label>
-                    <input type="number" id="mapZoomInput" value="7.5" min="1" max="20" step="0.1" style="width: 100%;">
-                </div>
-                <div class="filter-actions-vertical">
-                    <button id="searchBtn" class="btn primary full-width">
-                        <i data-lucide="search"></i> Buscar
-                    </button>
-                    <button id="resetFiltersBtn" class="btn secondary full-width" title="Reiniciar filtros">
-                        <i data-lucide="rotate-ccw"></i> Limpiar
-                    </button>
-                </div>
-            </aside>
         </div>
-
-        <main class="page-content glass-panel">
-            <div class="table-container">
-                <table class="events-table">
-                    <thead>
-                        <tr>
-                            <th id="sortDate" style="cursor: pointer;">Fecha <i data-lucide="arrow-up-down"></i></th>
-                            <th id="sortTitle" style="cursor: pointer;">Evento <i data-lucide="arrow-up-down"></i></th>
-                            <th id="sortLoc" style="cursor: pointer;">Ayuntamiento <i data-lucide="arrow-up-down"></i>
-                            </th>
-                            <th id="sortProvince" style="cursor: pointer;">Provincia <i data-lucide="arrow-up-down"></i>
-                            </th>
-                            <th>Horario</th>
-                            <th>Estado</th>
-                            <th>Acciones</th>
-                        </tr>
-                    </thead>
-                    <tbody id="eventsTableBody">
-                        <!-- Filled by JS -->
-                    </tbody>
-                </table>
-            </div>
-        </main>
     </div>
 
-    <!-- Modals are shared between pages visually, but need to be present or injected -->
     <!-- Modal: Add Event -->
     <div id="addEventModal" class="modal">
         <div class="modal-content">
